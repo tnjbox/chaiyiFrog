@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>按鈕色塊與變數示例</title>
+<style>
+  .input-container {
+    margin-bottom: 20px;
+  }
+  .input-container label {
+    margin-right: 10px;
+  }
+  .button-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%; /* 容器寬度設為100% */
+  }
+  .button-container button {
+    width: calc(10% - 10px); /* 每個按鈕寬度為10%減去間隔 */
+    height: 50px; /* 高度保持不變 */
+    margin: 5px; /* 間隔設為5px */
+    font-size: 14px;
+    background-color: #E0E0E0; /* 預設背景色 */
+  }
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .action-button {
+    width: 49%; /* 按鈕寬度設為49% */
+    height: 50px;
+    font-size: 16px;
+    border: none; /* 移除邊框 */
+  }
+  .reset-button {
+    background-color: #FFD700; /* 金色 */
+    color: white; /* 文字顏色設為白色 */
+  }
+  .upload-button {
+    background-color: lightgreen; /* 背景色設為淺綠色 */
+    color: black; /* 文字顏色設為黑色 */
+  }
+</style>
+</head>
+<body>
+
+<div class="input-container">
+  <label for="classInput">班級:</label>
+  <input type="text" id="classInput" placeholder="輸入班級">
+  <label for="assignmentInput">作業名稱:</label>
+  <input type="text" id="assignmentInput" placeholder="輸入作業名稱">
+</div>
+
+<div class="action-buttons">
+  <button class="action-button reset-button" id="resetButton">重置所有變數</button>
+  <button class="action-button upload-button" id="uploadButton">上傳資料到Google試算表</button>
+</div>
+
+<div class="button-container" id="buttonContainer"></div>
+
+<script>
+// 建立一維陣列30個變數，預設值為0
+let variables = new Array(30).fill(0);
+let buttons = []; // 用於存儲按鈕的陣列
+
+// 根據按鈕值設定按鈕顏色
+function setButtonColor(button, value) {
+  const colors = {
+    0: "#E0E0E0", // 預設
+    1: "#FFD2D2", // 淺紅色
+    2: "#FFD1A4", // 淺橘色
+    3: "#FFFF93", // 淺黃色
+    4: "#BBFFBB", // 淺綠色
+    5: "#84C1FF"  // 淺藍色
+  };
+  button.style.backgroundColor = colors[value];
+}
+
+// 初始化按鈕
+function initButtons() {
+  const container = document.getElementById('buttonContainer');
+  for (let i = 0; i < 30; i++) {
+    const button = document.createElement('button');
+    button.textContent = `${i + 1}-0`;
+    button.onclick = function() {
+      variables[i] = (variables[i] + 1) % 6; // 每按一下增加1，到5後歸零
+      button.textContent = `${i + 1}-${variables[i]}`;
+      setButtonColor(button, variables[i]); // 更新按鈕顏色
+    };
+    setButtonColor(button, 0); // 初始化按鈕顏色
+    container.appendChild(button);
+    buttons.push(button); // 將按鈕加入陣列
+  }
+}
+
+// 重置所有變數並更新按鈕顯示
+function resetVariables() {
+  variables.fill(0); // 將所有變數重置為0
+  buttons.forEach((button, index) => {
+    button.textContent = `${index + 1}-0`; // 更新按鈕顯示
+    setButtonColor(button, 0); // 重置按鈕顏色
+  });
+}
+
+// 呼叫初始化函數
+initButtons();
+
+// 為重置按鈕添加事件處理器
+document.getElementById('resetButton').onclick = resetVariables;
+
+// 為上傳按鈕添加事件處理器（這裡需要您自行實現上傳的邏輯）
+document.getElementById('uploadButton').onclick = function() {
+  // 實現上傳到Google試算表的邏輯
+  var classText = document.getElementById('classInput').value;
+  var assignmentText = document.getElementById('assignmentInput').value;
+  var postData = {
+    class: classText,
+    assignment: assignmentText,
+    buttonValues: variables
+  };
+  
+  fetch('https://script.google.com/macros/s/AKfycbz8X7vxIxMBbBhaKuO6D6OybcC5l9EIkaBF1NhkztnLvniEcskp9cqJyfAKMWjPoy1c/exec', {
+    method: 'POST',
+    contentType: 'application/json',
+    payload: JSON.stringify(postData)
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+}
+</script>
+
+</body>
+</html>
