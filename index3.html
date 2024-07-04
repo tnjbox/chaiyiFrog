@@ -47,9 +47,9 @@
 
 <div class="input-container">
   <label for="classInput">班級:</label>
-  <input type="text" id="classInput" placeholder="輸入班級" value="904">
+  <input type="text" id="classInput" placeholder="輸入班級" value="904"> <!-- 預設文字設為904 -->
   <label for="assignmentInput">作業名稱:</label>
-  <input type="text" id="assignmentInput" placeholder="輸入作業名稱" value="1-1">
+  <input type="text" id="assignmentInput" placeholder="輸入作業名稱" value="1-1"> <!-- 預設文字設為1-1 -->
 </div>
 
 <div class="action-buttons">
@@ -60,9 +60,8 @@
 <div class="button-container" id="buttonContainer"></div>
 
 <script>
-// 建立一維陣列30個變數，預設值為0
 let variables = new Array(30).fill(0);
-  let cellcodes = [
+let cellcodes = [
   "&entry.718101403=",
   "&entry.1318922371=",
   "&entry.1230175307=",
@@ -95,6 +94,7 @@ let variables = new Array(30).fill(0);
   "&entry.1404307868=",
   "&entry.1320359478=",
   "&entry.640668047="
+  // 省略其他cellcodes以節省空間
 ];
 let buttons = []; // 用於存儲按鈕的陣列
 
@@ -143,21 +143,21 @@ initButtons();
 // 為重置按鈕添加事件處理器
 document.getElementById('resetButton').onclick = resetVariables;
 
-// 為上傳按鈕添加事件處理器
+// 修改後的上傳按鈕事件處理器
 document.getElementById('uploadButton').onclick = function() {
   var baseUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeG_MLjtQzECzNeKKYvxoflujc7X4i2T3UcG-vdb8B6hx1Mpg/formResponse?usp=pp_url';
 
   var queryParams = "";
   for (let i = 0; i < variables.length; i++) {
-    queryParams=queryParams + cellcodes[i+2] + variables[i];	
+    queryParams += cellcodes[i+2] + variables[i];	
   }
-  console.log(queryParams);
   var classText = document.getElementById('classInput').value;
   var assignmentText = document.getElementById('assignmentInput').value;
-  queryParams=queryParams + cellcodes[0] + encodeURIComponent(classText);
-  queryParams=queryParams + cellcodes[1] + encodeURIComponent(assignmentText);
+  queryParams += cellcodes[0] + encodeURIComponent(classText);
+  queryParams += cellcodes[1] + encodeURIComponent(assignmentText);
   
-  var submitUrl = baseUrl+ queryParams;
+  var submitUrl = baseUrl + queryParams;
+  // 使用fetch發送請求，不讀取回應，也不開新視窗
   fetch(submitUrl, {mode: 'no-cors'}).then(() => console.log('Submitted successfully')).catch((error) => console.error('Submission error', error));
 };
 </script>
