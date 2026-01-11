@@ -1,24 +1,23 @@
 flowchart TD
-    A[dfs(r, c, stepsLeft, coins)] --> B{stepsLeft == 0?}
-    
-    B -- 是 --> C[更新最佳解]
-    C --> D[return 回上一層]
-    
-    B -- 否 --> E[嘗試四個方向 for dirs]
-    
-    E --> F{方向合法?}
-    F -- 否 --> E
-    
-    F -- 是 --> G{是否走過?}
-    G -- 是 --> E
-    
-    G -- 否 --> H[做選擇<br/>setBit + path.push]
-    H --> I[dfs(下一格)]
-    
-    I --> J[子遞迴結束]
-    J --> K[回溯<br/>path.pop()<br/>visitedMask = oldMask]
-    
-    K --> E
-    
-    E --> L[所有方向都嘗試完]
-    L --> D
+    A[dfs(r, c, stepsLeft, coins)]
+    B{stepsLeft == 0?}
+    C[更新最佳解]
+    D[return 回上一層]
+    E[嘗試四個方向]
+    F{方向是否在地圖內?}
+    G{是否已走過?}
+    H[做選擇<br/>標記走過<br/>加入路徑]
+    I[遞迴 dfs 下一格]
+    J[子遞迴結束]
+    K[回溯<br/>path.pop()<br/>visitedMask = oldMask]
+    L[所有方向嘗試完]
+
+    A --> B
+    B -->|是| C --> D
+    B -->|否| E
+    E --> F
+    F -->|否| E
+    F -->|是| G
+    G -->|是| E
+    G -->|否| H --> I --> J --> K --> E
+    E --> L --> D
